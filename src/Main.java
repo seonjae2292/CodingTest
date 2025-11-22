@@ -1,30 +1,28 @@
-import problem.Baek4779;
-
 import java.io.*;
-import java.util.*;
+
+import static problem.Baek4779.solution;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Baek4779 baek4779 = new Baek4779();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line;
 
-        while ((line = br.readLine()) != null) {
-            if (line.trim().isEmpty()) continue;  // 빈 줄 방지
+        while ((line = br.readLine()) != null) { // EOF 처리
+            if (line.trim().isEmpty()) continue;
 
             int N = Integer.parseInt(line.trim());
             int strlen = (int) Math.pow(3, N);
 
-            List<String> target = new ArrayList<>();
+            // 1. StringBuilder로 기본 세팅 (모두 '-'로 채움)
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < strlen; i++) {
-                target.add("-");
+                sb.append("-");
             }
 
-            List<String> result = baek4779.solution(target, N, 0);
+            // 2. 재귀 함수 호출 (0번 인덱스부터 전체 길이만큼)
+            solution(sb, 0, strlen);
 
-            // 출력
-            StringBuilder sb = new StringBuilder();
-            for (String s : result) sb.append(s);
+            // 3. 결과 출력
             System.out.println(sb.toString());
         }
     }
