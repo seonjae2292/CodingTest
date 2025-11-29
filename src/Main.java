@@ -1,29 +1,28 @@
-import problem.Baek24479;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
 
+
 public class Main {
+    static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+    static int[] visited;
+    static int cnt = 1;
+
     public static void main(String[] args) throws IOException {
-        Baek24479 baek24479 = new Baek24479();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken()); // 정점의 수
-        int M = Integer.parseInt(st.nextToken()); // 간선의 수
-        int R = Integer.parseInt(st.nextToken()); // 시작 정점
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        int R = Integer.parseInt(st.nextToken());
 
-        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
-        int[] visited = new int[N + 1];
+        visited = new int[N + 1];
 
-        // initialize graph
         for (int i = 0; i <= N; i++) {
             graph.add(new ArrayList<>());
         }
 
-        // create graph
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
 
@@ -34,15 +33,15 @@ public class Main {
             graph.get(v).add(u);
         }
 
-        // Sorted ASC
         for (int i = 0; i <= N; i++) {
             Collections.sort(graph.get(i));
         }
-        baek24479.solution(graph, visited, R);
-        for (int i = 1; i < visited.length; i++) {
+
+        dfs(R);
+
+        for (int i=1; i<visited.length; i++) {
             System.out.print(visited[i] + " ");
         }
-
 //        baek22479.solution(graph, visited, R);
 
 //        int N = Integer.parseInt(br.readLine());
@@ -68,5 +67,16 @@ public class Main {
 //                sb.append("-");
 //            }
 //        }
+    }
+
+    public static void dfs(int startR) {
+        visited[startR] = cnt;
+        cnt++;
+
+        for (int num : graph.get(startR)) {
+            if (visited[num] == 0) { // 방문한적 있는지 체크 필요
+                dfs(num);
+            }
+        }
     }
 }
