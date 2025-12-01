@@ -1,14 +1,15 @@
-import problem.Baek24444;
+import problem.Baek24444_R;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int[] visited;
+
     public static void main(String[] args) throws IOException {
-        // N 정점 개수, M 간선 개수, 무방향, 오름차순, R 시작 정점
-
-        Baek24444 baek24444 = new Baek24444();
-
+        Baek24444_R baek24444_R = new Baek24444_R();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
@@ -16,8 +17,9 @@ public class Main {
         int M = Integer.parseInt(st.nextToken());
         int R = Integer.parseInt(st.nextToken());
 
-        int[] visited = new int[N + 1];
+        visited = new int[N + 1];
 
+        // N 정점 개수, M 간선 개수, R 시작 정점, 오름차순, 무방향
         ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
         for (int i = 0; i <= N; i++) {
             graph.add(new ArrayList<>());
@@ -37,10 +39,10 @@ public class Main {
             Collections.sort(graph.get(i));
         }
 
-        baek24444.bfs(graph, visited, R);
+        baek24444_R.bfs(graph, visited, R);
 
-        for (int i = 1; i < visited.length; i++) {
-            System.out.println(visited[i]);
+        for (int next : visited) {
+            System.out.println(next);
         }
     }
 }
