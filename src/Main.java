@@ -1,27 +1,32 @@
-import problem.Baek2606;
+import problem.Baek1260;
 
 import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int[] visited;
     static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
-        Baek2606 beak2606 = new Baek2606();
+        Baek1260 baek1260 = new Baek1260();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         int N = Integer.parseInt(st.nextToken());
-
-        st = new StringTokenizer(br.readLine());
         int M = Integer.parseInt(st.nextToken());
+        int V = Integer.parseInt(st.nextToken());
+
+        int[] visitedDFS = new int[N + 1];
+        int[] visitedBFS = new int[N + 1];
+
+        List<Integer> resultDFS = new ArrayList<>();
+        List<Integer> resultBFS = new ArrayList<>();
+
+        int orderDFS = 1;
+        int orderBFS = 1;
 
         for (int i = 0; i <= N; i++) {
             graph.add(new ArrayList<>());
         }
-
-        visited = new int[N + 1];
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
@@ -37,6 +42,16 @@ public class Main {
             Collections.sort(graph.get(i));
         }
 
-        System.out.println(beak2606.bfs(graph, visited));
+        baek1260.dfs(graph, resultDFS, visitedDFS, V, orderDFS);
+        baek1260.bfs(graph, resultBFS, visitedBFS, V, orderBFS);
+
+        for (int item : resultDFS) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+        for (int item : resultBFS) {
+            System.out.print(item + " ");
+        }
     }
 }
+// 방문된 점을 순서대로 출력
