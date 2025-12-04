@@ -1,57 +1,51 @@
-import problem.Baek1260;
-
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static problem.Baek2667.solution;
 
 public class Main {
-    static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+    static int[][] map; // 입력 기록
+    static boolean[][] visited; // 방문 기록
+    static int count; // 집 개수
+    static int N;
+    static List<Integer> resultList = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
-        Baek1260 baek1260 = new Baek1260();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
-        int V = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(br.readLine());
 
-        int[] visitedDFS = new int[N + 1];
-        int[] visitedBFS = new int[N + 1];
+        map = new int[N][N];
+        visited = new boolean[N][N];
 
-        List<Integer> resultDFS = new ArrayList<>();
-        List<Integer> resultBFS = new ArrayList<>();
+        // 입력
+        for (int i = 0; i < N; i++) {
+            String line = br.readLine();
 
-        int orderDFS = 1;
-        int orderBFS = 1;
-
-        for (int i = 0; i <= N; i++) {
-            graph.add(new ArrayList<>());
+            for (int j = 0; j < N; j++) {
+                map[i][j] = line.charAt(j) - '0';
+            }
         }
 
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
+        // 하나씩 순회하면서 인접한 집들 방문
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
 
-            int u = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
-
-            graph.get(u).add(v);
-            graph.get(v).add(u);
+                // 집이 있어야 하고 방문한적 없어야한다.
+                if (map[i][j] == 1 && !visited[i][j]) {
+                    count = 0;
+                    solution(i, j, visited, count, N, map);
+                    resultList.add(count);
+                }
+            }
         }
 
-        for (int i = 0; i <= N; i++) {
-            Collections.sort(graph.get(i));
-        }
-
-        baek1260.dfs(graph, resultDFS, visitedDFS, V, orderDFS);
-        baek1260.bfs(graph, resultBFS, visitedBFS, V, orderBFS);
-
-        for (int item : resultDFS) {
-            System.out.print(item + " ");
-        }
-        System.out.println();
-        for (int item : resultBFS) {
-            System.out.print(item + " ");
+        Collections.sort(resultList);
+        System.out.println(resultList.size());
+        for (int c : resultList) {
+            System.out.println(c);
         }
     }
 }
-// 방문된 점을 순서대로 출력
