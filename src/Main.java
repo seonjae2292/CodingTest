@@ -1,54 +1,70 @@
-import problem.Baek1260_R;
-
 import java.io.*;
 import java.util.*;
 
-
 public class Main {
-    static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
-
-    // 방문한 곳
-    static ArrayList<Integer> visitedDFS = new ArrayList<>();
-    static ArrayList<Integer> visitedBFS = new ArrayList<>();
-
-    // 방문 기록
-    static int[] saveDFS;
-    static int[] saveBFS;
+    static int[][] map; // 지도
+    static boolean[][] visited; // 방문 기록
+    static int count;
+    static List<Integer> resultList = new ArrayList<>(); // 각 단지별 집의 개수
+    static int[] dx = { -1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
+    static int N;
 
     public static void main(String[] args) throws IOException {
-        Baek1260_R baek1260_R = new Baek1260_R();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
-        int V = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
 
-        saveDFS = new int[N + 1];
-        saveBFS = new int[N + 1];
+        map = new int[N][N];
+        visited = new boolean[N][N];
 
-        // 입력
-        for (int i = 0; i <= N; i++) {
-            graph.add(new ArrayList<>());
+        // 지도 입력
+        for (int i = 0; i < N; i++) {
+            String line = br.readLine();
+            for (int j = 0; j < N; j++) {
+                map[i][j] = line.charAt(j) - '0';
+            }
         }
 
-        // 저장
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
+        // 순회
+        // 연결되어 있는 집을 찾기 위해
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                // 집이 있어야 하고 방문한적 없어야 한다.
+                if (map[i][j] == 1 && !visited[i][j]) {
+                    count = 0;
 
-            int u = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
-
-            graph.get(u).add(v);
-            graph.get(v).add(u);
+                    // 지도의 (i, j) 순회하며 집이 있으면 연결되어 있는 집 찾기
+                    solution(i, j);
+                    resultList.add(count);
+                }
+            }
         }
 
-        // 정렬 : 오름차순
-        for (int i = 0; i <= N; i++) {
-            Collections.sort(graph.get(i));
+        System.out.println(resultList.size());
+        Collections.sort(resultList);
+        for (int item : resultList) {
+            System.out.println(item);
         }
+    }
 
-        baek1260_R.DFS(graph, V, visitedDFS, saveDFS);
-        baek1260_R.BFS(graph, V, visitedBFS, saveBFS);
+    public static void solution(int x, int y) {
+        visited[x][y] = true; // 방문 체크
+        count++;
+
+        // 상 하 좌 우 연결되어 있는지 확인
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 지도 보다 크거나 작으면 안된다.
+            if (nx >= 0 && ny >= 0 && nx < N & ny < N) {
+                // 집이 있어야 하고 방문한적 없어야한다.
+                if (map[nx][ny] == 1 && !visited[nx][ny]) {
+                    solution(nx, ny);
+                }
+            }
+        }
     }
 }
