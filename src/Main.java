@@ -43,7 +43,7 @@ public class Main {
         }
         System.out.println(result);
     }
-
+//
     public static void bfs() {
         Queue<int[]> queue = new LinkedList<>();
         queue.add(start.getFirst());
