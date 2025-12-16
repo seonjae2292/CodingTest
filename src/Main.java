@@ -1,57 +1,75 @@
 import java.io.*;
 import java.util.*;
 
-// 방문 기록&몇초 를 한번에 계산할거임
 public class Main {
-    static int[] map = new int[100001]; // N,K의 최댓값 + 1
-    static int N, K;
+    static int[][] map;
+    static int M, N;
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = { 0, 0, -1, 1};
+    static List<int[]> start = new ArrayList<>();
+    static int result = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken()); // 열
+        N = Integer.parseInt(st.nextToken()); // 행
 
-        if (N == K) {
-            System.out.println(0);
-            return;
+        map = new int[N][M];
+
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            for (int j = 0; j < M; j++) {
+                int target = Integer.parseInt(st.nextToken());
+                map[i][j] = target;
+
+                // 시작점으로 사용할 좌표 기록
+                if(target == 1 && start.isEmpty()) {
+                    start.add(new int[]{i, j});
+                }
+            }
         }
 
         bfs();
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (map[i][j] > result) {
+                    result = map[i][j];
+                }
+            }
+        }
+        System.out.println(result);
     }
 
     public static void bfs() {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(N);
-        map[N] = 1; // 첫 번째 방문 기록
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(start.getFirst());
 
         while (!queue.isEmpty()) {
-            int curr = queue.poll();
+            int[] curr = queue.poll();
 
-            // 이동할 수 있는 위치
-            int[] next = {curr + 1, curr - 1, curr * 2};
+            for (int i = 0; i < 4; i++) {
+                int nx = curr[0] + dx[i];
+                int ny = curr[1] + dy[i];
 
-            // 이동할 수 있는 위치 탐색
-            for (int item : next) {
-                // 범위를 넘으면 안된다.
-                if(item < 0 || item > 100000) continue;
+                if (nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
 
-                // 목표 위치에 왔으면 출력
-                if (item == K) {
-                    System.out.println(map[curr]);
-                    return;
-                }
-
-                // 방문한 적 없어야 한다.
-                if (map[item] == 0) {
-                    queue.add(item);
-                    map[item] = map[curr] + 1;
+                // 이동하는 위치에 존재해야하고 이미 방문했으면 안된다.
+                if (map[nx][ny] != -1 && map[nx][ny] != 1) {
+                    queue.add(new int[]{nx, ny});
+                    map[nx][ny] = map[curr[0]][curr[1]] + 1;
                 }
             }
         }
     }
 }
 
-// 방문 기록 및 시간 기록
-// 제약조건 : 이동한 곳의 범위(0이상 100,000 이하)
+// 며칠이 지나면 다 익게 되는지 최소 일수
+// 1 : 익은, 0 : 익지 않은, -1 : 없는
+// 모두 익은 return 0, 모두 익지 못함 return -1
+
+// 시작점을 어디로 잡아야함? -> 시작점을 저장하는 변수 필요
+// 며칠이 걸리는지 어떻게 알 수 있지.
