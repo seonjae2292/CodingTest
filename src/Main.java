@@ -2,12 +2,11 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int M, N, H;
-    static int[][][] map;
+    static int N, M;
+    static int[][] map;
     static Queue<int[]> queue = new LinkedList<>();
-    static int[] dz = {-1, 1, 0, 0, 0, 0};
-    static int[] dx = {0, 0, -1, 1, 0, 0};
-    static int[] dy = {0, 0, 0, 0, -1, 1};
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
     static boolean isCompleted = true;
     static int result = 0;
 
@@ -17,25 +16,20 @@ public class Main {
 
         M = Integer.parseInt(st.nextToken()); // 열
         N = Integer.parseInt(st.nextToken()); // 행
-        H = Integer.parseInt(st.nextToken());
 
-        map = new int[H][N][M];
+        map = new int[N][M];
 
-        // 3차원 배열 생성
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < N; j++) {
-                st = new StringTokenizer(br.readLine());
-                for (int k = 0; k < M; k++) {
-                    map[i][j][k] = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
 
-                    // 시작점으로 사용되는 것들 저장
-                    if (map[i][j][k] == 1) {
-                        queue.add(new int[]{i, j, k});
-                    }
+                if (map[i][j] == 1) {
+                    queue.add(new int[]{i, j});
+                }
 
-                    if (map[i][j][k] == 0) {
-                        isCompleted = false;
-                    }
+                if (map[i][j] == 0) {
+                    isCompleted = false;
                 }
             }
         }
@@ -47,24 +41,19 @@ public class Main {
 
         bfs();
 
-        // 0이 남아있는지 탐색
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < N; j++) {
-                for (int k = 0; k < M; k++) {
-                    if (map[i][j][k] == 0) {
-                        System.out.println(-1);
-                        return;
-                    }
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (map[i][j] == 0) {
+                    System.out.println(-1);
+                    return;
                 }
             }
         }
 
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < N; j++) {
-                for (int k = 0; k < M; k++) {
-                    if(map[i][j][k] > result) {
-                        result = map[i][j][k];
-                    }
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (map[i][j] > result) {
+                    result = map[i][j];
                 }
             }
         }
@@ -76,25 +65,23 @@ public class Main {
         while (!queue.isEmpty()) {
             int[] curr = queue.poll();
 
-            for (int j = 0; j < 6; j++) {
-                int nz = curr[0] + dz[j];
-                int nx = curr[1] + dx[j];
-                int ny = curr[2] + dy[j];
+            for (int i = 0; i < 4; i++) {
+                int nx = curr[0] + dx[i];
+                int ny = curr[1] + dy[i];
 
-                if(nz < 0 || nx < 0 || ny < 0 || nz >= H || nx >= N || ny >= M) continue;
+                if(nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
 
-                if (map[nz][nx][ny] == 0) {
-                    queue.add(new int[]{nz, nx, ny});
-                    map[nz][nx][ny] = map[curr[0]][curr[1]][curr[2]] + 1;
+                if (map[nx][ny] == 0) {
+                    queue.add(new int[]{nx, ny});
+                    map[nx][ny] = map[curr[0]][curr[1]] + 1;
                 }
             }
         }
     }
 }
 
-// 시작 점이 여러개이다.
-// 이동할 수 있는 좌표 구하기
-// 기준이 되는 곳의 값에 +1 해야한다.
-// 가장 큰 값을 골라야 한다.
-// 모두 익어있는 상태
-// 모두 익지 못하는 상태
+// M : 상자 가로 칸의 수, N : 상자 세로 칸의 수
+// 익은 : 1, 익지 않은 : 0, 없는 : -1
+// 출발 지점이 여러개 : map 초기화 할 때 미리 저장해야 한다.
+
+// 출력
