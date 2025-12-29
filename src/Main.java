@@ -2,66 +2,84 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N,M;
-    static int[] visited;
-    static int[] move;
+    static int N, M;
+    static int[][] map;
+    static Queue<int[]> queue = new LinkedList<>();
+    static boolean isCompleted = true;
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
+    static int result = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken()); // 사다리의 수
-        M = Integer.parseInt(st.nextToken()); // 뱀의 수
+        M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
 
-        visited = new int[101];
-        move = new int[101];
+        map = new int[N][M];
 
-        for (int i = 0; i < N+M; i++) {
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
 
-            int x = Integer.parseInt(st.nextToken());
+                if(map[i][j] == 0) isCompleted = false;
+                if(map[i][j] == 1) queue.add(new int[]{i, j});
+            }
+        }
 
-            move[x] = Integer.parseInt(st.nextToken());
+        if (isCompleted) {
+            System.out.println(0);
+            return;
         }
 
         bfs();
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (map[i][j] == 0) {
+                    System.out.println(-1);
+                    return;
+                }
+            }
+        }
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if(map[i][j] > result) {
+                    result = map[i][j];
+                }
+            }
+        }
+
+        System.out.println(result - 1);
     }
 
     public static void bfs() {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(1);
-
         while (!queue.isEmpty()) {
-            int target = queue.poll();
+            int[] curr = queue.poll();
 
-            for (int i = 1; i <= 6; i++) {
-                int next = target + i;
+            for (int i = 0; i < 4; i++) {
+                int tX = curr[0] + dx[i];
+                int tY = curr[1] + dy[i];
 
-                // next가 100이 되면 count를 반환해야한다.
+                if(tX < 0 || tY < 0 || tX >= N || tY >= M) continue;
 
-                if(next > 100) continue;
-
-                // 이미 방문 했는지 체크하기
-                if (visited[next] == 0) {
-                    if (move[next] != 0) {
-                        visited[next] = 1; // 방문 체크
-                        queue.add(move[next]);
-                    }
+                if (map[tX][tY] == 0) {
+                    queue.add(new int[]{tX, tY});
+                    map[tX][tY] = map[curr[0]][curr[1]] + 1;
                 }
             }
         }
     }
 }
+// 모든 토마토들이 다 익는 최소 일수
+// 상자의 가로 칸의 수 : M 열
+// 상자의 세로 칸의 수 : N 행
+// 1 : 익은, 0 : 익지 않은, -1 : 없는
+// 0 다수의 시작점 -> 행렬을 저장할 때 1 이면 좌표를 queue에 넣어 놓는다
 
-// 100번 칸에 도착하기 위해 주사위를 굴려야 하는 횟수의 최솟값? -> bfs
-// 게임의 크기 10 * 10 -> 1 ~ 100 까지 순서대로 적혀있음
-// 모든 칸은 최대 하나 사다리 또는 뱀 있음
-// 동시에 두 가지를 모두 가지고 있는 경우는 없다 -> 방문 했던 곳은 또 다시 방문하지 않는다.
-
-// 방문 체크
-// map
-
-// 주사위 돌린 횟수를 어떻게 카운트 하면될까?
-
-// --------
-// visited -> 방문했다만 저장하는 대신 여기까지 오는데 걸린 횟수 저장
+// 출력
+// 0 모두 익어 있으면 0
+// 모두 익지 못하는 상황이면 -1
